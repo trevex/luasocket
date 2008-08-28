@@ -4,25 +4,29 @@
 
 
 SET(luasocket_MIME
-		${LuaSocket_SOURCE_DIR}/src/mime.h
 		${LuaSocket_SOURCE_DIR}/src/mime.c
 )
+
+SET(luasocket_MIME_PUBLIC_HEADERS
+		${LuaSocket_SOURCE_DIR}/src/mime.h
+)
 SET(luamime_RESOURCE_FILES
+		# handled in above script
 #		${LuaSocket_SOURCE_DIR}/src/mime.lua
 )
 
 
 IF(WANTS_BUILD_SHARED_LIBRARY)
-	ADD_LIBRARY(luamime_library_dynamic MODULE ${luasocket_PUBLIC_HEADERS} ${luasocket_MIME})
-	SET_TARGET_PROPERTIES(luamime_library_dynamic PROPERTIES
+	ADD_LIBRARY(luamime_library_module MODULE ${luasocket_MIME_PUBLIC_HEADERS} ${luasocket_MIME})
+	SET_TARGET_PROPERTIES(luamime_library_module PROPERTIES
 		PREFIX ""
 		OUTPUT_NAME "core"
 	)
-	SET_TARGET_PROPERTIES(luamime_library_dynamic PROPERTIES COMPILE_FLAGS "${LUASOCKET_C_FLAGS}")
-	TARGET_LINK_LIBRARIES(luamime_library_dynamic ${LUA_LIBRARIES} ${LUASOCKET_LINK_FLAGS})
+	SET_TARGET_PROPERTIES(luamime_library_module PROPERTIES COMPILE_FLAGS "${LUASOCKET_C_FLAGS}")
+	TARGET_LINK_LIBRARIES(luamime_library_module ${LUA_LIBRARIES} ${LUASOCKET_LINK_FLAGS})
 ENDIF(WANTS_BUILD_SHARED_LIBRARY)
 #IF(WANTS_BUILD_STATIC_LIBRARY)
-	ADD_LIBRARY(luamime_library_static STATIC ${luasocket_PUBLIC_HEADERS} ${luasocket_MIME})
+	ADD_LIBRARY(luamime_library_static STATIC ${luasocket_MIME_PUBLIC_HEADERS} ${luasocket_MIME})
 	SET_TARGET_PROPERTIES(luamime_library_static PROPERTIES OUTPUT_NAME "mime")
 	SET_TARGET_PROPERTIES(luamime_library_static PROPERTIES COMPILE_FLAGS "${LUASOCKET_C_FLAGS}")
 	TARGET_LINK_LIBRARIES(luamime_library_static ${LUA_LIBRARIES} ${LUASOCKET_LINK_FLAGS})
@@ -37,9 +41,10 @@ INSTALL(TARGETS
 )
 
 IF(WANTS_BUILD_SHARED_LIBRARY)
-	INSTALL(TARGETS luamime_library_dynamic DESTINATION ${LUAPACKAGE_CDIR}/mime)
+	INSTALL(TARGETS luamime_library_module DESTINATION ${LUAPACKAGE_CDIR}/mime)
 ENDIF(WANTS_BUILD_SHARED_LIBRARY)
 
 INSTALL(FILES ${luamime_RESOURCE_FILES} DESTINATION ${LUAPACKAGE_LDIR}/mime)
+INSTALL(FILES ${luasocket_MIME_PUBLIC_HEADERS} DESTINATION include)
 
 

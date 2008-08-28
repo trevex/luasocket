@@ -1,18 +1,14 @@
-IF(APPLE)
-	CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
-ELSE(APPLE)
-	CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
-ENDIF(APPLE)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
 PROJECT(LuaSocket)
 
 IF(USING_LUA_MULTI_SET)
 	IF(NOT LUA_LIBRARIES)
-		IF(lua_library_dynamic)
-			SET(LUA_LIBRARIES lua_library_dynamic)
-		ELSE(lua_library_dynamic)
+		IF(lua_library_module)
+			SET(LUA_LIBRARIES lua_library_module)
+		ELSE(lua_library_module)
 			SET(LUA_LIBRARIES lua_library_static)
-		ENDIF(lua_library_dynamic)
+		ENDIF(lua_library_module)
 	ENDIF(NOT LUA_LIBRARIES)
 	IF(NOT LUA_INCLUDE_DIR)
 		SET(LUA_INCLUDE_DIR ${Lua_SOURCE_DIR}/src)
@@ -23,7 +19,6 @@ ENDIF(USING_LUA_MULTI_SET)
 
 OPTION(WANTS_BUILD_SHARED_LIBRARY "Set to ON to build dynamic library." ON)
 #OPTION(WANTS_BUILD_STATIC_LIBRARY "Set to ON to build static library." ON)
-OPTION(WANTS_BUILD_FRAMEWORK "Set to ON to build framework instead of dylib. Only valid if BUILD_SHARED_LIBRARY is ON an is OS X." ON)
 
 SET(LUAPACKAGE_CDIR "lib/lua/5.1" CACHE STRING "Path for Lua packaged platform specific things.")
 SET(LUAPACKAGE_LDIR "share/lua/5.1" CACHE STRING "Path for Lua packages platform independent things.")
@@ -42,7 +37,7 @@ INCLUDE_DIRECTORIES(
 
 
 #IF(WANTS_BUILD_SHARED_LIBRARY AND WANTS_BUILD_FRAMEWORK)
-#	SET_TARGET_PROPERTIES(luasocket_library_dynamic PROPERTIES
+#	SET_TARGET_PROPERTIES(luasocket_library_module PROPERTIES
 #		FRAMEWORK TRUE
 #		# FRAMEWORK_VERSION 5.1
 #		#  PRIVATE_HEADER "fooPrivate.h;fooBoth.h"
@@ -53,7 +48,7 @@ INCLUDE_DIRECTORIES(
 #	)
 #ENDIF(WANTS_BUILD_SHARED_LIBRARY AND WANTS_BUILD_FRAMEWORK)
 
-#SET_TARGET_PROPERTIES(luasocket_library_dynamic PROPERTIES
+#SET_TARGET_PROPERTIES(luasocket_library_module PROPERTIES
 #	PUBLIC_HEADER "${luasocket_PUBLIC_HEADERS}"
 #	RESOURCE "${luasocket_RESOURCE_FILES}"
 #)	
