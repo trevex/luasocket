@@ -2,6 +2,8 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
 PROJECT(LuaSocket)
 
+INCLUDE(CPack)
+
 IF(USING_LUA_MULTI_SET)
 	IF(NOT LUA_LIBRARIES)
 		IF(lua_library_module)
@@ -17,8 +19,15 @@ ELSE(USING_LUA_MULTI_SET)
 	FIND_PACKAGE(Lua51 REQUIRED)
 ENDIF(USING_LUA_MULTI_SET)
 
-OPTION(WANTS_BUILD_SHARED_LIBRARY "Set to ON to build dynamic library." ON)
-#OPTION(WANTS_BUILD_STATIC_LIBRARY "Set to ON to build static library." ON)
+OPTION(WANTS_BUILD_MODULE_LIBRARY "Set to ON to build loadable module." ON)
+OPTION(WANTS_BUILD_STATIC_LIBRARY "Set to ON to build static library." ON)
+
+IF(NOT WANTS_BUILD_STATIC_LIBRARY AND NOT WANTS_BUILD_MODULE_LIBRARY)
+	MESSAGE(SEND_ERROR "Either WANTS_BUILD_STATIC_LIBRARY or WANTS_BUILD_MODULE_LIBRARY needs to be selected, but both are OFF. So there is nothing to build.")
+ENDIF(NOT WANTS_BUILD_STATIC_LIBRARY AND NOT WANTS_BUILD_MODULE_LIBRARY)
+
+
+
 
 SET(LUAPACKAGE_CDIR "lib/lua/5.1" CACHE STRING "Path for Lua packaged platform specific things.")
 SET(LUAPACKAGE_LDIR "share/lua/5.1" CACHE STRING "Path for Lua packages platform independent things.")
