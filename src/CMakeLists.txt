@@ -1,4 +1,16 @@
 
+IF(WIN32)
+	SET(luasocket_PLATFORM_SPECIFIC
+		${LuaSocket_SOURCE_DIR}/src/wsocket.h
+		${LuaSocket_SOURCE_DIR}/src/wsocket.c
+	)
+ELSEIF(UNIX)
+	SET(luasocket_PLATFORM_SPECIFIC
+		${LuaSocket_SOURCE_DIR}/src/usocket.h
+		${LuaSocket_SOURCE_DIR}/src/usocket.c
+	)
+ENDIF(WIN32)
+
 SET(luasocket_SOCKET
 		${LuaSocket_SOURCE_DIR}/src/luasocket.c
 		${LuaSocket_SOURCE_DIR}/src/inet.h
@@ -11,6 +23,17 @@ SET(luasocket_SOCKET
 		${LuaSocket_SOURCE_DIR}/src/except.c
 		${LuaSocket_SOURCE_DIR}/src/select.h
 		${LuaSocket_SOURCE_DIR}/src/select.c
+		${LuaSocket_SOURCE_DIR}/src/timeout.h
+		${LuaSocket_SOURCE_DIR}/src/timeout.c
+		${LuaSocket_SOURCE_DIR}/src/buffer.h
+		${LuaSocket_SOURCE_DIR}/src/buffer.c
+		${LuaSocket_SOURCE_DIR}/src/io.h
+		${LuaSocket_SOURCE_DIR}/src/io.c
+		${LuaSocket_SOURCE_DIR}/src/auxiliar.h
+		${LuaSocket_SOURCE_DIR}/src/auxiliar.c
+		${LuaSocket_SOURCE_DIR}/src/options.h
+		${LuaSocket_SOURCE_DIR}/src/options.c
+		${luasocket_PLATFORM_SPECIFIC}
 )
 
 SET(luasocket_PUBLIC_HEADERS
