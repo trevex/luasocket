@@ -4,21 +4,6 @@ PROJECT(LuaSocket)
 
 INCLUDE(CPack)
 
-IF(USING_LUA_MULTI_SET)
-	IF(NOT LUA_LIBRARIES)
-		IF(lua_library_module)
-			SET(LUA_LIBRARIES lua_library_module)
-		ELSE(lua_library_module)
-			SET(LUA_LIBRARIES lua_library_static)
-		ENDIF(lua_library_module)
-	ENDIF(NOT LUA_LIBRARIES)
-	IF(NOT LUA_INCLUDE_DIR)
-		SET(LUA_INCLUDE_DIR ${Lua_SOURCE_DIR}/src)
-	ENDIF(NOT LUA_INCLUDE_DIR)
-ELSE(USING_LUA_MULTI_SET)
-	FIND_PACKAGE(Lua51 REQUIRED)
-ENDIF(USING_LUA_MULTI_SET)
-
 OPTION(WANTS_BUILD_MODULE_LIBRARY "Set to ON to build loadable module." ON)
 OPTION(WANTS_BUILD_STATIC_LIBRARY "Set to ON to build static library." ON)
 
@@ -57,14 +42,14 @@ INCLUDE_DIRECTORIES(
 #		PUBLIC_HEADER "${luasocket_PUBLIC_HEADERS}"
 		# RESOURCE "${RESOURCE_FILES}"
 #		INSTALL_NAME_DIR "@executable_path/../Frameworks"
-#		BUILD_WITH_INSTALL_RPATH 1 # FIXME: User option or Xcode=1 
+#		BUILD_WITH_INSTALL_RPATH 1 # FIXME: User option or Xcode=1
 #	)
 #ENDIF(WANTS_BUILD_SHARED_LIBRARY AND WANTS_BUILD_FRAMEWORK)
 
 #SET_TARGET_PROPERTIES(luasocket_library_module PROPERTIES
 #	PUBLIC_HEADER "${luasocket_PUBLIC_HEADERS}"
 #	RESOURCE "${luasocket_RESOURCE_FILES}"
-#)	
+#)
 
 
 IF(NOT USING_LUA_MULTI_SET)
@@ -79,18 +64,18 @@ ENDIF(NOT USING_LUA_MULTI_SET)
 
 
 
-# Set defaults for Universal Binaries. We want 32-bit Intel/PPC on 10.4 
+# Set defaults for Universal Binaries. We want 32-bit Intel/PPC on 10.4
 # and 32/64-bit Intel/PPC on >= 10.5. Anything <= 10.3 doesn't support.
 IF(APPLE)
     # These are just defaults/recommendations, but how we want to build
     # out of the box. But the user needs to be able to change these options.
-    # So we must only set the values the first time CMake is run, or we 
+    # So we must only set the values the first time CMake is run, or we
     # will overwrite any changes the user sets.
     # FORCE is used because the options are not reflected in the UI otherwise.
     # Seems like a good place to add version specific compiler flags too.
     IF(NOT LUA_CONFIG_HAS_BEEN_RUN_BEFORE)
-        # This is really fragile, but CMake doesn't provide the OS system 
-        # version information we need. (Darwin versions can be changed 
+        # This is really fragile, but CMake doesn't provide the OS system
+        # version information we need. (Darwin versions can be changed
         # independently of OS X versions.)
         # It does look like CMake handles the CMAKE_OSX_SYSROOT automatically.
         IF(EXISTS /Developer/SDKs/MacOSX10.5.sdk)
