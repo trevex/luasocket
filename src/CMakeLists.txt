@@ -47,6 +47,9 @@ SET(luasocket_RESOURCE_FILES
 		${LuaSocket_SOURCE_DIR}/src/ftp.lua
 		${LuaSocket_SOURCE_DIR}/src/smtp.lua
 		${LuaSocket_SOURCE_DIR}/src/url.lua
+		${LuaSocket_SOURCE_DIR}/src/mbox.lua
+		${LuaSocket_SOURCE_DIR}/src/headers.lua
+
 )
 
 SET(luasocketcommon_RESOURCE_FILES

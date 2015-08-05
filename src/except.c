@@ -1,8 +1,6 @@
 /*=========================================================================*\
 * Simple exception support
 * LuaSocket toolkit
-*
-* RCS ID: $Id: except.c,v 1.8 2005/09/29 06:11:41 diego Exp $
 \*=========================================================================*/
 #include <stdio.h>
 
@@ -10,6 +8,15 @@
 #include "lauxlib.h"
 
 #include "except.h"
+
+#if LUA_VERSION_NUM < 502
+#define lua_pcallk(L, na, nr, err, ctx, cont) \
+    ((void)ctx,(void)cont,lua_pcall(L, na, nr, err))
+#endif
+
+#if LUA_VERSION_NUM < 503
+typedef int lua_KContext;
+#endif
 
 /*=========================================================================*\
 * Internal function prototypes.
@@ -21,7 +28,7 @@ static int finalize(lua_State *L);
 static int do_nothing(lua_State *L);
 
 /* except functions */
-static luaL_reg func[] = {
+static luaL_Reg func[] = {
     {"newtry",    global_newtry},
     {"protect",   global_protect},
     {NULL,        NULL}
@@ -75,14 +82,30 @@ static int unwrap(lua_State *L) {
     } else return 0;
 }
 
+static int protected_finish(lua_State *L, int status, lua_KContext ctx) {
+    (void)ctx;
+    if (status != 0 && status != LUA_YIELD) {
+        if (unwrap(L)) return 2;
+        else return lua_error(L);
+    } else return lua_gettop(L);
+}
+
+#if LUA_VERSION_NUM == 502
+static int protected_cont(lua_State *L) {
+    int ctx = 0;
+    int status = lua_getctx(L, &ctx);
+    return protected_finish(L, status, ctx);
+}
+#else
+#define protected_cont protected_finish
+#endif
+
 static int protected_(lua_State *L) {
+    int status;
     lua_pushvalue(L, lua_upvalueindex(1));
     lua_insert(L, 1);
-    if (lua_pcall(L, lua_gettop(L) - 1, LUA_MULTRET, 0) != 0) {
-        if (unwrap(L)) return 2;
-        else lua_error(L);
-        return 0;
-    } else return lua_gettop(L);
+    status = lua_pcallk(L, lua_gettop(L) - 1, LUA_MULTRET, 0, 0, protected_cont);
+    return protected_finish(L, status, 0);
 }
 
 static int global_protect(lua_State *L) {
@@ -94,6 +117,10 @@ static int global_protect(lua_State *L) {
 * Init module
 \*-------------------------------------------------------------------------*/
 int except_open(lua_State *L) {
+#if LUA_VERSION_NUM > 501 && !defined(LUA_COMPAT_MODULE)
+    luaL_setfuncs(L, func, 0);
+#else
     luaL_openlib(L, NULL, func, 0);
+#endif
     return 0;
 }
