@@ -4,7 +4,7 @@ PROJECT(LuaSocket)
 
 INCLUDE(CPack)
 
-OPTION(WANTS_BUILD_MODULE_LIBRARY "Set to ON to build loadable module." ON)
+OPTION(WANTS_BUILD_MODULE_LIBRARY "Set to ON to build loadable module." OFF)
 OPTION(WANTS_BUILD_STATIC_LIBRARY "Set to ON to build static library." ON)
 
 set(LUA_INCLUDE_DIR "" CACHE STRING "Path to lua includes")
